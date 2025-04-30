@@ -1,0 +1,14 @@
+name: recompensa_app
+description: Um app simples para recompensas com anúncios
+
+dependencies:
+  flutter:
+    sdk: flutter
+  google_mobile_ads: ^2.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

@@ -1,0 +1,86 @@
+import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'App de Recompensa',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: MyHomePage(),
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  late RewardedAd _rewardedAd;
+  bool _isAdLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRewardedAd();
+  }
+
+  void _loadRewardedAd() {
+    RewardedAd.load(
+      adUnitId: 'ca-app-pub-3940256099942544/5224354917', // ID de teste do Google
+      request: AdRequest(),
+      rewardedAdLoadCallback: RewardedAdLoadCallback(
+        onAdLoaded: (ad) {
+          setState(() {
+            _rewardedAd = ad;
+            _isAdLoaded = true;
+          });
+        },
+        onAdFailedToLoad: (error) {
+          print('Falha ao carregar o anúncio: $error');
+        },
+      ),
+    );
+  }
+
+  void _showRewardedAd() {
+    if (_isAdLoaded) {
+      _rewardedAd.show(
+        onUserEarnedReward: (ad, reward) {
+          print('Recompensa recebida: ${reward.amount} ${reward.type}');
+        },
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _rewardedAd.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('App de Recompensa'),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: _showRewardedAd,
+          child: Text('Assistir anúncio e ganhar recompensa'),
+        ),
+      ),
+    );
+  }
+}
